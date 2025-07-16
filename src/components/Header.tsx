@@ -22,8 +22,8 @@ const pages = [
   { label: "Etablissement", path: "/pricing" },
   { label: "Section", path: "/blog" },
   { label: "Province", path: "/blog" },
-  { label: "Commune", path: "/blog" },
-  { label: "Zone", path: "/zone" },
+  { label: "Commune", path: "/commune" },
+  { label: "zone", path: "/zone" },
 ];
 
 const settings = [
