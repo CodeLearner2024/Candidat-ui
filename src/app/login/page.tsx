@@ -1,60 +1,113 @@
-"use client"
+"use client";
 
-import React from 'react';
-import { Box, Button, Container, Typography, TextField, IconButton, InputAdornment } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  TextField,
+  IconButton,
+  InputAdornment,
+  Paper,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+  const router = useRouter();
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
-    // 👉 Ici tu feras la logique réelle (appel API, etc.)
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setToken("");
+
+    try {
+      const res = await fetch(
+        "http://localhost:8001/candidat-manager/api/v1/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Invalid credentials");
+      }
+
+      const data = await res.json();
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+      router.push("/");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unknown error");
+      }
+    }
   };
 
   return (
     <Container maxWidth="sm">
-      <Box
+      <Paper
+        elevation={3}
         sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: 4,
-          boxShadow: 3,
+          mt: 8,
+          p: 4,
           borderRadius: 2,
-          bgcolor: 'background.paper',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          bgcolor: "background.paper",
         }}
       >
         <Typography component="h1" variant="h5" gutterBottom>
           Login
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+          sx={{ mt: 2, width: "100%" }}
+          noValidate
+        >
           <TextField
             margin="normal"
             required
             fullWidth
             label="Email Address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            variant="outlined"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
+
           <TextField
             margin="normal"
             required
             fullWidth
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            variant="outlined"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             InputProps={{
@@ -64,23 +117,49 @@ export default function LoginForm() {
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
+                    edge="end"
                   >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
           />
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3 }}
+            color="primary"
+            sx={{ mt: 3, py: 1.5 }}
           >
             Login
           </Button>
         </Box>
-      </Box>
+
+        {error && (
+          <Typography
+            variant="body2"
+            color="error"
+            sx={{ mt: 2, textAlign: "center" }}
+          >
+            {error}
+          </Typography>
+        )}
+
+        {token && (
+          <Box
+            sx={{
+              mt: 2,
+              p: 2,
+              bgcolor: "#f5f5f5",
+              borderRadius: 1,
+              wordBreak: "break-all",
+              width: "100%",
+            }}
+          ></Box>
+        )}
+      </Paper>
     </Container>
   );
 }
