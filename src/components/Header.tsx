@@ -14,9 +14,11 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import AdbIcon from "@mui/icons-material/Adb";
+import { useTranslation } from "react-i18next";
 
-// ✅ define routes for links
+// Définir les pages et paramètres (labels doivent correspondre à ceux dans translation.json)
 const pages = [
   { label: "Profession", path: "/products" },
   { label: "Etablissement", path: "/pricing" },
@@ -40,27 +42,24 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const { t, i18n } = useTranslation();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const handleCloseNavMenu = () => setAnchorElNav(null);
+  const handleCloseUserMenu = () => setAnchorElUser(null);
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Desktop Logo */}
+          {/* Logo Desktop */}
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -80,13 +79,10 @@ function ResponsiveAppBar() {
             LOGO
           </Typography>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
-              aria-label="open navigation menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
             >
@@ -95,15 +91,9 @@ function ResponsiveAppBar() {
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
               keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
@@ -118,14 +108,14 @@ function ResponsiveAppBar() {
                       width: "100%",
                     }}
                   >
-                    <Typography textAlign="center">{page.label}</Typography>
+                    <Typography textAlign="center">{t(page.label)}</Typography>
                   </Link>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
 
-          {/* Mobile Logo */}
+          {/* Logo Mobile */}
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -146,7 +136,7 @@ function ResponsiveAppBar() {
             LOGO
           </Typography>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Nav */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -156,12 +146,26 @@ function ResponsiveAppBar() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page.label}
+                {t(page.label)}
               </Button>
             ))}
           </Box>
 
-          {/* User Avatar and Settings Menu */}
+          {/* Lang Selector */}
+          <Box sx={{ mx: 2 }}>
+            <Select
+              value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              size="small"
+              variant="outlined"
+              sx={{ backgroundColor: "white", height: 35 }}
+            >
+              <MenuItem value="fr">Français</MenuItem>
+              <MenuItem value="en">English</MenuItem>
+            </Select>
+          </Box>
+
+          {/* Avatar Menu */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -170,17 +174,10 @@ function ResponsiveAppBar() {
             </Tooltip>
             <Menu
               sx={{ mt: "45px" }}
-              id="menu-appbar"
               anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
               keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
@@ -194,7 +191,9 @@ function ResponsiveAppBar() {
                       width: "100%",
                     }}
                   >
-                    <Typography textAlign="center">{setting.label}</Typography>
+                    <Typography textAlign="center">
+                      {t(setting.label)}
+                    </Typography>
                   </Link>
                 </MenuItem>
               ))}

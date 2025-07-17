@@ -29,8 +29,12 @@ import {
   FormControl,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import "../../i18n/i18n";
 
 export default function CommunePage() {
+  const { t } = useTranslation();
+
   // Form states
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
@@ -191,7 +195,7 @@ export default function CommunePage() {
         }}
         sx={{ mb: 2 }}
       >
-        Ajouter une Commune
+        {t("create_commune")}
       </Button>
 
       {/* Table */}

@@ -25,6 +25,8 @@ import {
   DialogContentText,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import "../../i18n/i18n";
 
 type Severity = "error" | "warning" | "info" | "success";
 
@@ -35,6 +37,8 @@ type Province = {
 };
 
 export default function ProvincePage() {
+  const { t } = useTranslation();
+
   // Form states
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
@@ -159,7 +163,7 @@ export default function ProvincePage() {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Gestion des Provinces
+        {t("title")}
       </Typography>
 
       <Button
@@ -173,7 +177,7 @@ export default function ProvincePage() {
         }}
         sx={{ mb: 2 }}
       >
-        Ajouter une Province
+        {t("create_province")}
       </Button>
 
       {/* Table */}
