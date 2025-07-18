@@ -23,27 +23,29 @@ import {
   IconButton,
   TablePagination,
   DialogContentText,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import "../../i18n/i18n";
 
-export default function CommunePage() {
+type Severity = "error" | "warning" | "info" | "success";
+
+type Profession = {
+  id: number;
+  code: string;
+  designation: string;
+};
+
+export default function ProvincePage() {
   const { t } = useTranslation();
 
   // Form states
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
-  const [communeId, setCommuneId] = useState<number | "">("");
   const [editId, setEditId] = useState<number | null>(null);
 
   // Data
-  const [communes, setCommunes] = useState<Commune[]>([]);
-  const [zones, setZones] = useState<Zone[]>([]);
+  const [professions, setProfessions] = useState<Profession[]>([]);
 
   // Pagination
   const [page, setPage] = useState(0);
@@ -59,45 +61,30 @@ export default function CommunePage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
-  const token = localStorage.getItem("token");
-
-  // Load communes
-  const fetchZones = async () => {
+  // Load all provinces
+  const fetchProfessions = async () => {
+    const token = localStorage.getItem("token");
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
       return;
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/zones",
-        { headers: { Authorization: `Bearer ${token}` } }
+        "http://localhost:8001/candidat-manager/api/v1/professions",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      setZones(res.data);
-    } catch {
-      showNotification("Erreur de chargement des zones.", "error");
-    }
-  };
-
-  // Load provinces
-  const fetchCommunes = async () => {
-    if (!token) {
-      showNotification("Token manquant. Connectez-vous.", "error");
-      return;
-    }
-    try {
-      const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/communes",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCommunes(res.data);
-    } catch {
-      showNotification("Erreur de chargement des communes.", "error");
+      setProfessions(res.data);
+    } catch (err) {
+      showNotification("Erreur de chargement des professions.", "error");
     }
   };
 
   useEffect(() => {
-    fetchZones();
-    fetchCommunes();
+    fetchProfessions();
   }, []);
 
   // Snackbar helpers
@@ -110,34 +97,33 @@ export default function CommunePage() {
 
   // Save (create or update)
   const handleSave = async () => {
+    const token = localStorage.getItem("token");
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
-      return;
-    }
-    if (!communeId) {
-      showNotification("Veuillez choisir la commune.", "warning");
       return;
     }
 
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/zones/${editId}`,
-          { code, designation, communeId },
+          `http://localhost:8001/candidat-manager/api/v1/professions/${editId}`,
+          { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        showNotification("Zone mise à jour avec succès !", "success");
+        showNotification("Profession mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/zones",
-          { code, designation, communeId },
+          "http://localhost:8001/candidat-manager/api/v1/professions",
+          { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        showNotification("Zone ajoutée avec succès !", "success");
+        showNotification("Profession ajoutée avec succès !", "success");
       }
       setFormOpen(false);
-      resetForm();
-      fetchZones();
+      setCode("");
+      setDesignation("");
+      setEditId(null);
+      fetchProfessions();
     } catch (err: any) {
       const message =
         err?.response?.data?.message || "Erreur lors de l'enregistrement.";
@@ -145,16 +131,10 @@ export default function CommunePage() {
     }
   };
 
-  const resetForm = () => {
-    setCode("");
-    setDesignation("");
-    setCommuneId("");
-    setEditId(null);
-  };
-
   // Delete
   const handleDelete = async () => {
     if (!deleteTargetId) return;
+    const token = localStorage.getItem("token");
     if (!token) {
       showNotification("Token manquant.", "error");
       return;
@@ -162,18 +142,18 @@ export default function CommunePage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/zones/${deleteTargetId}`,
+        `http://localhost:8001/candidat-manager/api/v1/professions/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      showNotification("zone supprimée avec succès.", "success");
+      showNotification("Profession supprimée avec succès.", "success");
       setDeleteConfirmOpen(false);
-      fetchCommunes();
+      fetchProfessions();
     } catch {
       showNotification("Erreur lors de la suppression.", "error");
     }
   };
 
-  // Pagination
+  // Handlers for pagination
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
@@ -183,19 +163,21 @@ export default function CommunePage() {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>
-        {t("title_zone")}
+        {t("title_province")}
       </Typography>
 
       <Button
         variant="contained"
         startIcon={<Add />}
         onClick={() => {
-          resetForm();
+          setCode("");
+          setDesignation("");
+          setEditId(null);
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
       >
-        {t("create_zone")}
+        {t("create_province")}
       </Button>
 
       {/* Table */}
@@ -205,26 +187,23 @@ export default function CommunePage() {
             <TableRow>
               <TableCell>Code</TableCell>
               <TableCell>Désignation</TableCell>
-              <TableCell>Commune</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {zones
+            {professions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((zone) => (
-                <TableRow key={zone.id}>
-                  <TableCell>{zone.code}</TableCell>
-                  <TableCell>{zone.designation}</TableCell>
-                  <TableCell>{zone.commune?.designation}</TableCell>
+              .map((profession) => (
+                <TableRow key={profession.id}>
+                  <TableCell>{profession.code}</TableCell>
+                  <TableCell>{profession.designation}</TableCell>
                   <TableCell align="right">
                     <IconButton
                       color="primary"
                       onClick={() => {
-                        setEditId(zone.id);
-                        setCode(zone.code);
-                        setDesignation(zone.designation);
-                        setCommuneId(zone.commune.id);
+                        setEditId(profession.id);
+                        setCode(profession.code);
+                        setDesignation(profession.designation);
                         setFormOpen(true);
                       }}
                     >
@@ -233,7 +212,7 @@ export default function CommunePage() {
                     <IconButton
                       color="error"
                       onClick={() => {
-                        setDeleteTargetId(zone.id);
+                        setDeleteTargetId(profession.id);
                         setDeleteConfirmOpen(true);
                       }}
                     >
@@ -246,7 +225,7 @@ export default function CommunePage() {
         </Table>
         <TablePagination
           component="div"
-          count={zones.length}
+          count={professions.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
@@ -257,7 +236,7 @@ export default function CommunePage() {
       {/* Add/Edit Dialog */}
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} fullWidth>
         <DialogTitle>
-          {editId ? "Modifier une Zone" : "Ajouter une Zone"}
+          {editId ? "Modifier une Profession" : "Ajouter une Profession"}
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -274,21 +253,6 @@ export default function CommunePage() {
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="province-select-label">Commune</InputLabel>
-            <Select
-              labelId="province-select-label"
-              label="Commune"
-              value={communeId}
-              onChange={(e) => setCommuneId(e.target.value as number)}
-            >
-              {communes.map((com) => (
-                <MenuItem key={com.id} value={com.id}>
-                  {com.designation}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setFormOpen(false)}>Annuler</Button>
@@ -306,7 +270,7 @@ export default function CommunePage() {
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Voulez-vous vraiment supprimer cette zone ?
+            Voulez-vous vraiment supprimer cette Profession ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -183,7 +183,7 @@ export default function CommunePage() {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Gestion des Communes
+        {t("title_commune")}
       </Typography>
 
       <Button

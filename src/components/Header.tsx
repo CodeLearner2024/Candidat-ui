@@ -20,12 +20,12 @@ import { useTranslation } from "react-i18next";
 
 // Définir les pages et paramètres (labels doivent correspondre à ceux dans translation.json)
 const pages = [
-  { label: "Profession", path: "/products" },
+  { label: "Profession", path: "/profession" },
   { label: "Etablissement", path: "/pricing" },
-  { label: "Section", path: "/blog" },
-  { label: "Province", path: "/blog" },
+  { label: "Section", path: "/section" },
+  { label: "Zone", path: "/zone" },
   { label: "Commune", path: "/commune" },
-  { label: "zone", path: "/zone" },
+  { label: "Province", path: "/province" },
 ];
 
 const settings = [
