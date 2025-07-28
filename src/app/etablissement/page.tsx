@@ -252,6 +252,7 @@ export default function EtablissementPage() {
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
+        size="small"
       >
         {t("create_etablissement") || "Ajouter un établissement"}
       </Button>
@@ -301,11 +302,13 @@ export default function EtablissementPage() {
             fullWidth
             margin="normal"
             value={code}
+            size="small"
             onChange={(e) => setCode(e.target.value)}
           />
           <TextField
             label="Désignation"
             fullWidth
+            size="small"
             margin="normal"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
@@ -317,6 +320,7 @@ export default function EtablissementPage() {
               labelId="province-label"
               value={provinceId}
               label="Province"
+              size="small"
               onChange={(e) => {
                 const selected = e.target.value as number;
                 setProvinceId(selected);
@@ -341,6 +345,7 @@ export default function EtablissementPage() {
               labelId="commune-label"
               value={communeId}
               label="Commune"
+              size="small"
               onChange={(e) => {
                 const selected = e.target.value as number;
                 setCommuneId(selected);
@@ -363,6 +368,7 @@ export default function EtablissementPage() {
               labelId="zone-label"
               value={zoneId}
               label="Zone"
+              size="small"
               onChange={(e) => setZoneId(e.target.value as number)}
             >
               {zones.map((zone) => (
@@ -393,8 +399,10 @@ export default function EtablissementPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Annuler</Button>
-          <Button color="error" onClick={handleDeleteConfirm}>
+          <Button onClick={() => setDeleteConfirmOpen(false)} size="small">
+            Annuler
+          </Button>
+          <Button color="error" onClick={handleDeleteConfirm} size="small">
             Supprimer
           </Button>
         </DialogActions>

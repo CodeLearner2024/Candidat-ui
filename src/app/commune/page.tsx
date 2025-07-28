@@ -194,6 +194,7 @@ export default function CommunePage() {
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
+        size="small"
       >
         {t("create_commune")}
       </Button>
@@ -265,11 +266,13 @@ export default function CommunePage() {
             fullWidth
             margin="normal"
             value={code}
+            size="small"
             onChange={(e) => setCode(e.target.value)}
           />
           <TextField
             label="Désignation"
             fullWidth
+            size="small"
             margin="normal"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
@@ -279,6 +282,7 @@ export default function CommunePage() {
             <Select
               labelId="province-select-label"
               label="Province"
+              size="small"
               value={provinceId}
               onChange={(e) => setProvinceId(e.target.value as number)}
             >

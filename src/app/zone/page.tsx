@@ -194,6 +194,7 @@ export default function CommunePage() {
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
+        size="small"
       >
         {t("create_zone")}
       </Button>
@@ -263,6 +264,7 @@ export default function CommunePage() {
           <TextField
             label="Code"
             fullWidth
+            size="small"
             margin="normal"
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -270,6 +272,7 @@ export default function CommunePage() {
           <TextField
             label="Désignation"
             fullWidth
+            size="small"
             margin="normal"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
@@ -279,6 +282,7 @@ export default function CommunePage() {
             <Select
               labelId="province-select-label"
               label="Commune"
+              size="small"
               value={communeId}
               onChange={(e) => setCommuneId(e.target.value as number)}
             >
@@ -291,8 +295,10 @@ export default function CommunePage() {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFormOpen(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button onClick={() => setFormOpen(false)} size="small">
+            Annuler
+          </Button>
+          <Button variant="contained" onClick={handleSave} size="small">
             Enregistrer
           </Button>
         </DialogActions>

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Candidat",
+  title: "Mon parcours professionnel",
   description: "Candidat managment system",
 };
 

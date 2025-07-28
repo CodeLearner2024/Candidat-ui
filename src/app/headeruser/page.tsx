@@ -7,12 +7,12 @@ import React from "react";
 
 // Menu avec libellé et lien
 const menuItems = [
-  { label: "ACCUEIL", href: "/acceuil" },
-  { label: "A propos", href: "/propos" },
-  // { label: "PÉDAGOGIE", href: "/pedagogie" },
-  // { label: "INSCRIPTIONS", href: "/inscriptions" },
-  // { label: "LA VIE À L'ÉCOLE", href: "/vie-scolaire" },
-  // { label: "INFORMATIONS", href: "/informations" },
+  { label: "ACCUEIL", href: "/" },
+  { label: "Mon Dossier", href: "/etablissement" },
+  { label: "Appel", href: "/pedagogie" },
+  { label: "Aide", href: "/inscriptions" },
+  { label: "Yes", href: "/vie-scolaire" },
+  { label: "Yes", href: "/informations" },
   { label: "CONNEXION", href: "/login" },
 ];
 

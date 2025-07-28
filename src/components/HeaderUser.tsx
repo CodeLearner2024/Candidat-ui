@@ -1,27 +1,30 @@
 "use client";
 
-import { Box, Typography, AppBar, Toolbar, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  AppBar,
+  Toolbar,
+  Button,
+} from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 // Menu avec libellé et lien
 const menuItems = [
-  { label: "ACCUEIL", href: "/acceuil" },
-  { label: "A propos", href: "/propos" },
-  // { label: "PÉDAGOGIE", href: "/pedagogie" },
-  // { label: "INSCRIPTIONS", href: "/inscriptions" },
-  // { label: "LA VIE À L'ÉCOLE", href: "/vie-scolaire" },
-  // { label: "INFORMATIONS", href: "/informations" },
+  { label: "ACCUEIL", href: "/" },
+  { label: "Mon Dossier", href: "/etablissement" },
+  { label: "Appel", href: "/pedagogie" },
+  { label: "Aide", href: "/inscriptions" },
+  { label: "Yes", href: "/vie-scolaire" },
+  { label: "Yes", href: "/informations" },
   { label: "CONNEXION", href: "/login" },
 ];
 
 const Header = () => {
   return (
-    <AppBar
-      position="static"
-      sx={{ backgroundColor: "#0D3D6A", boxShadow: "none" }}
-    >
+    <AppBar position="static" sx={{ backgroundColor: "#0D3D6A", boxShadow: "none" }}>
       <Toolbar sx={{ justifyContent: "space-between", py: 1 }}>
         {/* Logo gauche */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -29,47 +32,25 @@ const Header = () => {
             <Image src="/logo.jpeg" alt="EFB Logo" width={80} height={60} />
           </Box>
           <Box>
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              color="white"
-              lineHeight={1}
-            >
+            <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1}>
               GB
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: "red", fontWeight: "bold" }}
-            >
+            <Typography variant="caption" sx={{ color: "red", fontWeight: "bold" }}>
               Burundi
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: "white", display: "block" }}
-            >
+            <Typography variant="caption" sx={{ color: "white", display: "block" }}>
               Parcours Professionnel
             </Typography>
           </Box>
         </Box>
 
         {/* Menu navigation */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
           {menuItems.map((item, index) => (
             <Link key={index} href={item.href} passHref legacyBehavior>
               <Button
                 component="a"
-                sx={{
-                  color: "white",
-                  fontSize: "0.875rem",
-                  textTransform: "none",
-                }}
+                sx={{ color: "white", fontSize: "0.875rem", textTransform: "none" }}
               >
                 {item.label}
               </Button>

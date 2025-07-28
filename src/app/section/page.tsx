@@ -176,6 +176,7 @@ export default function SectionPage() {
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
+        size="small"
       >
         {t("create_filiere")}
       </Button>
@@ -243,20 +244,24 @@ export default function SectionPage() {
             label="Code"
             fullWidth
             margin="normal"
+            size="small"
             value={code}
             onChange={(e) => setCode(e.target.value)}
           />
           <TextField
             label="Désignation"
             fullWidth
+            size="small"
             margin="normal"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFormOpen(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button onClick={() => setFormOpen(false)} size="small">
+            Annuler
+          </Button>
+          <Button variant="contained" onClick={handleSave} size="small">
             Enregistrer
           </Button>
         </DialogActions>

@@ -57,10 +57,20 @@ export default function LoginForm() {
       const data = await res.json();
       setToken(data.token);
       localStorage.setItem("token", data.token);
-      router.push("/");
+      localStorage.setItem("role", data.role);
+
+      // const role = localStorage.getItem("role");
+      // if (role === "ADMIN") {
+      router.push("/headeradmin");
+      console.log("connexion reussie");
+      // } else if (role === "USER") {
+      //   router.push("/headeruser");
+      //   console.log("connexion user reussi");
+      // }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
+        console.log("connexion echoue");
       } else {
         setError("Unknown error");
       }
@@ -99,10 +109,12 @@ export default function LoginForm() {
             variant="outlined"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            size="small"
           />
 
           <TextField
             margin="normal"
+            size="small"
             required
             fullWidth
             label="Password"
@@ -132,6 +144,7 @@ export default function LoginForm() {
             variant="contained"
             color="primary"
             sx={{ mt: 3, py: 1.5 }}
+            size="small"
           >
             Login
           </Button>

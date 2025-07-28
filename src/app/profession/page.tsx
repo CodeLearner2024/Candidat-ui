@@ -176,6 +176,7 @@ export default function ProvincePage() {
           setFormOpen(true);
         }}
         sx={{ mb: 2 }}
+        size="small"
       >
         {t("create_province")}
       </Button>
@@ -242,6 +243,7 @@ export default function ProvincePage() {
           <TextField
             label="Code"
             fullWidth
+            size="small"
             margin="normal"
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -249,14 +251,17 @@ export default function ProvincePage() {
           <TextField
             label="Désignation"
             fullWidth
+            size="small"
             margin="normal"
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFormOpen(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button onClick={() => setFormOpen(false)} size="small">
+            Annuler
+          </Button>
+          <Button variant="contained" onClick={handleSave} size="small">
             Enregistrer
           </Button>
         </DialogActions>
@@ -274,8 +279,10 @@ export default function ProvincePage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Annuler</Button>
-          <Button color="error" onClick={handleDelete}>
+          <Button onClick={() => setDeleteConfirmOpen(false)} size="small">
+            Annuler
+          </Button>
+          <Button color="error" onClick={handleDelete} size="small">
             Supprimer
           </Button>
         </DialogActions>
