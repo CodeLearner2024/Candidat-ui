@@ -39,8 +39,8 @@ type Province = {
 export default function ProvincePage() {
   const { t } = useTranslation();
 
-  // Form states
-  const [code, setCode] = useState("");
+  const API_URL = (// Form states
+  process.env.const[(code, setCode)] = useState(""));
   const [designation, setDesignation] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 

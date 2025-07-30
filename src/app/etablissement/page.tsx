@@ -31,6 +31,8 @@ import { Add, Edit, Delete } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import "../../i18n/i18n";
 
+
+
 export default function EtablissementPage() {
   const { t } = useTranslation();
 

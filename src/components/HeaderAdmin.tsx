@@ -17,7 +17,7 @@ const menuItems = [
   { label: "Commune", href: "/etablissement" },
   { label: "Zone", href: "/pedagogie" },
   { label: "Etablissement", href: "/inscriptions" },
-  { label: "Filiere", href: "/vie-scolaire" },
+  { label: "Filiere", href: "/section" },
   { label: "Profession", href: "/informations" },
   { label: "CONNEXION", href: "/login" },
 ];
