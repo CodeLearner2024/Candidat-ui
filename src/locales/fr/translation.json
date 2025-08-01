@@ -38,5 +38,10 @@
     "save_error": "Erreur lors de l'enregistrement.",
     "delete_success": "Province supprimée avec succès.",
     "delete_error": "Erreur lors de la suppression."
-  }
+  },
+  "welcome": "Bienvenue",
+  "settings": "Paramètres",
+  "login": "Connexion",
+  "home": "Accueil",
+  "careerPath": "Parcours Professionnel"
 }

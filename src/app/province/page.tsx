@@ -39,8 +39,7 @@ type Province = {
 export default function ProvincePage() {
   const { t } = useTranslation();
 
-  const API_URL = (// Form states
-  process.env.const[(code, setCode)] = useState(""));
+  const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
@@ -186,8 +185,8 @@ export default function ProvincePage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Code</TableCell>
-              <TableCell>Désignation</TableCell>
+              <TableCell>{t("code")}</TableCell>
+              <TableCell>{t("designation")}</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -237,11 +236,11 @@ export default function ProvincePage() {
       {/* Add/Edit Dialog */}
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} fullWidth>
         <DialogTitle>
-          {editId ? "Modifier une Province" : "Ajouter une Province"}
+          {editId ? t("edit_province") : t("add_province")}
         </DialogTitle>
         <DialogContent>
           <TextField
-            label="Code"
+            label={t("code")}
             fullWidth
             size="small"
             margin="normal"
@@ -249,7 +248,7 @@ export default function ProvincePage() {
             onChange={(e) => setCode(e.target.value)}
           />
           <TextField
-            label="Désignation"
+            label={t("designation")}
             fullWidth
             size="small"
             margin="normal"
@@ -259,10 +258,10 @@ export default function ProvincePage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setFormOpen(false)} size="small">
-            Annuler
+            {t("cancel")}
           </Button>
           <Button variant="contained" onClick={handleSave} size="small">
-            Enregistrer
+            {t("save")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -274,14 +273,14 @@ export default function ProvincePage() {
       >
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Voulez-vous vraiment supprimer cette province ?
-          </DialogContentText>
+          <DialogContentText>{t("confirm_delete")}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Annuler</Button>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>
+            {t("cancel")}
+          </Button>
           <Button color="error" onClick={handleDelete}>
-            Supprimer
+            {t("delete")}
           </Button>
         </DialogActions>
       </Dialog>

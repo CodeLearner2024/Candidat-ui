@@ -39,5 +39,10 @@
     "save_error": "Error while saving.",
     "delete_success": "Province successfully deleted.",
     "delete_error": "Error while deleting."
-  }
+  },
+  "welcome": "Welcome",
+  "settings": "Settings",
+  "login": "Login",
+  "home": "Home",
+  "careerPath": "Career Path"
 }

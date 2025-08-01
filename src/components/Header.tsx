@@ -14,24 +14,33 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-
+import "../i18n/i18n";
+import { useTranslation } from "react-i18next";
 // Fonction pour lire ou définir un rôle par défaut
 const getUserRoleFromToken = (): string | null => {
   if (typeof window !== "undefined") {
     let storedRole = localStorage.getItem("role");
-
-    // Si aucun rôle n'est stocké, on le définit à "USER" par défaut
     if (!storedRole) {
-      storedRole = "USER"; // ou "ADMIN"
+      storedRole = "USER";
       localStorage.setItem("role", storedRole);
     }
-
-    // Nettoyage : suppression des espaces et mise en majuscule
     return storedRole.trim().toUpperCase();
   }
-
   return null;
 };
+
+const getUserLanguage = (): string => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("lang") || "fr";
+  }
+  return "fr";
+};
+
+// const setUserLanguage = (lang: string) => {
+//   if (typeof window !== "undefined") {
+//     localStorage.setItem("lang", lang);
+//   }
+// };
 
 const menuItems = [
   { label: "ACCUEIL", href: "/acceuil" },
@@ -47,7 +56,7 @@ const monDossierMenuItems = [
 ];
 
 const settingsMenuItems = [
-  { label: "Province", href: "/" },
+  { label: "Province", href: "/province" },
   { label: "Commune", href: "/etablissement" },
   { label: "Zone", href: "/pedagogie" },
   { label: "Etablissement", href: "/inscriptions" },
@@ -61,6 +70,18 @@ const userProfileMenuItems = [
 ];
 
 const Header = () => {
+  const { t, i18n } = useTranslation();
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+    setLanguage(lang);
+    setLangAnchorEl(null);
+  };
+  // const router = useRouter();
+
+  // const handleLanguageChange = (lang: string) => {
+  //   router.push(router.pathname, router.asPath, { locale: lang });
+  // };
   const [monDossierAnchorEl, setMonDossierAnchorEl] =
     useState<null | HTMLElement>(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(
@@ -69,24 +90,33 @@ const Header = () => {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const [langAnchorEl, setLangAnchorEl] = useState<null | HTMLElement>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>("fr");
 
   const openMonDossier = Boolean(monDossierAnchorEl);
   const openSettings = Boolean(settingsAnchorEl);
   const openUserMenu = Boolean(userMenuAnchorEl);
+  const openLangMenu = Boolean(langAnchorEl);
 
   useEffect(() => {
     const role = getUserRoleFromToken();
-    console.log("Rôle utilisateur connecté :", role);
+    const lang = getUserLanguage();
     setUserRole(role);
+    setLanguage(lang);
   }, []);
 
-  // Normalisation du rôle pour comparaison
   const roleNormalized = userRole ? userRole.trim().toUpperCase() : null;
 
   const isAdmin = roleNormalized === "ADMIN";
-  const isUser = roleNormalized === "USER";
   const isAuthenticated = userRole !== null;
+
+  // const handleLanguageChange = (lang: string) => {
+  //   setUserLanguage(lang);
+  //   setLanguage(lang);
+  //   setLangAnchorEl(null);
+  //   window.location.reload(); // Recharge pour appliquer la langue (optionnel)
+  // };
 
   return (
     <AppBar
@@ -118,7 +148,7 @@ const Header = () => {
               variant="caption"
               sx={{ color: "white", display: "block" }}
             >
-              Parcours Professionnel
+              {t("careerPath")}
             </Typography>
           </Box>
         </Box>
@@ -142,7 +172,7 @@ const Header = () => {
                   textTransform: "none",
                 }}
               >
-                {item.label}
+                {t(item.label)}
               </Button>
             </Link>
           ))}
@@ -188,7 +218,6 @@ const Header = () => {
             </>
           )}
 
-          {/* Affiche seulement si ADMIN */}
           {isAdmin && (
             <>
               <Button
@@ -203,7 +232,7 @@ const Header = () => {
                   textTransform: "none",
                 }}
               >
-                Settings
+                {t("settings")}
               </Button>
               <Menu
                 id="settings-menu"
@@ -231,10 +260,32 @@ const Header = () => {
           )}
         </Box>
 
-        {/* Avatar utilisateur */}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* Avatar + Langue */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {isAuthenticated ? (
             <>
+              {/* Menu Langue */}
+              <Button
+                onClick={(e) => setLangAnchorEl(e.currentTarget)}
+                sx={{ color: "white", textTransform: "none" }}
+              >
+                {language.toUpperCase()}
+              </Button>
+              <Menu
+                id="lang-menu"
+                anchorEl={langAnchorEl}
+                open={openLangMenu}
+                onClose={() => setLangAnchorEl(null)}
+              >
+                <MenuItem onClick={() => handleLanguageChange("fr")}>
+                  Français
+                </MenuItem>
+                <MenuItem onClick={() => handleLanguageChange("en")}>
+                  English
+                </MenuItem>
+              </Menu>
+
+              {/* Avatar utilisateur */}
               <IconButton
                 onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}
                 sx={{ p: 0 }}
@@ -275,7 +326,7 @@ const Header = () => {
                   marginLeft: 2,
                 }}
               >
-                CONNEXION
+                {t("login")}
               </Button>
             </Link>
           )}
