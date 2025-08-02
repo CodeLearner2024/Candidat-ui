@@ -16,7 +16,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import "../i18n/i18n";
 import { useTranslation } from "react-i18next";
-// Fonction pour lire ou définir un rôle par défaut
+
 const getUserRoleFromToken = (): string | null => {
   if (typeof window !== "undefined") {
     let storedRole = localStorage.getItem("role");
@@ -36,12 +36,6 @@ const getUserLanguage = (): string => {
   return "fr";
 };
 
-// const setUserLanguage = (lang: string) => {
-//   if (typeof window !== "undefined") {
-//     localStorage.setItem("lang", lang);
-//   }
-// };
-
 const menuItems = [
   { label: "ACCUEIL", href: "/acceuil" },
   { label: "A propos", href: "/propos" },
@@ -57,11 +51,11 @@ const monDossierMenuItems = [
 
 const settingsMenuItems = [
   { label: "Province", href: "/province" },
-  { label: "Commune", href: "/etablissement" },
-  { label: "Zone", href: "/pedagogie" },
-  { label: "Etablissement", href: "/inscriptions" },
+  { label: "Commune", href: "/commune" },
+  { label: "Zone", href: "/zone" },
+  { label: "Etablissement", href: "/etablissement" },
   { label: "Filiere", href: "/section" },
-  { label: "Profession", href: "/informations" },
+  { label: "Profession", href: "/profession" },
 ];
 
 const userProfileMenuItems = [
@@ -71,25 +65,17 @@ const userProfileMenuItems = [
 
 const Header = () => {
   const { t, i18n } = useTranslation();
+
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
     localStorage.setItem("lang", lang);
     setLanguage(lang);
     setLangAnchorEl(null);
   };
-  // const router = useRouter();
 
-  // const handleLanguageChange = (lang: string) => {
-  //   router.push(router.pathname, router.asPath, { locale: lang });
-  // };
-  const [monDossierAnchorEl, setMonDossierAnchorEl] =
-    useState<null | HTMLElement>(null);
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
+  const [monDossierAnchorEl, setMonDossierAnchorEl] = useState<null | HTMLElement>(null);
+  const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [langAnchorEl, setLangAnchorEl] = useState<null | HTMLElement>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("fr");
@@ -111,18 +97,8 @@ const Header = () => {
   const isAdmin = roleNormalized === "ADMIN";
   const isAuthenticated = userRole !== null;
 
-  // const handleLanguageChange = (lang: string) => {
-  //   setUserLanguage(lang);
-  //   setLanguage(lang);
-  //   setLangAnchorEl(null);
-  //   window.location.reload(); // Recharge pour appliquer la langue (optionnel)
-  // };
-
   return (
-    <AppBar
-      position="static"
-      sx={{ backgroundColor: "#0D3D6A", boxShadow: "none" }}
-    >
+    <AppBar position="static" sx={{ backgroundColor: "#0D3D6A", boxShadow: "none" }}>
       <Toolbar sx={{ justifyContent: "space-between", py: 1 }}>
         {/* Logo */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -130,48 +106,23 @@ const Header = () => {
             <Image src="/logo.jpeg" alt="EFB Logo" width={80} height={60} />
           </Box>
           <Box>
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              color="white"
-              lineHeight={1}
-            >
+            <Typography variant="h6" fontWeight="bold" color="white" lineHeight={1}>
               GB
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: "red", fontWeight: "bold" }}
-            >
+            <Typography variant="caption" sx={{ color: "red", fontWeight: "bold" }}>
               Burundi
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: "white", display: "block" }}
-            >
+            <Typography variant="caption" sx={{ color: "white", display: "block" }}>
               {t("careerPath")}
             </Typography>
           </Box>
         </Box>
 
         {/* Navigation */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
           {menuItems.map((item, index) => (
-            <Link key={index} href={item.href} passHref legacyBehavior>
-              <Button
-                component="a"
-                sx={{
-                  color: "white",
-                  fontSize: "0.875rem",
-                  textTransform: "none",
-                }}
-              >
+            <Link key={index} href={item.href} passHref>
+              <Button sx={{ color: "white", fontSize: "0.875rem", textTransform: "none" }}>
                 {t(item.label)}
               </Button>
             </Link>
@@ -185,11 +136,7 @@ const Header = () => {
                 aria-haspopup="true"
                 aria-expanded={openMonDossier ? "true" : undefined}
                 onClick={(e) => setMonDossierAnchorEl(e.currentTarget)}
-                sx={{
-                  color: "white",
-                  fontSize: "0.875rem",
-                  textTransform: "none",
-                }}
+                sx={{ color: "white", fontSize: "0.875rem", textTransform: "none" }}
               >
                 Mon Dossier
               </Button>
@@ -200,17 +147,9 @@ const Header = () => {
                 onClose={() => setMonDossierAnchorEl(null)}
               >
                 {monDossierMenuItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => setMonDossierAnchorEl(null)}
-                  >
-                    <Link href={item.href} passHref legacyBehavior>
-                      <Typography
-                        component="a"
-                        sx={{ color: "inherit", textDecoration: "none" }}
-                      >
-                        {item.label}
-                      </Typography>
+                  <MenuItem key={index} onClick={() => setMonDossierAnchorEl(null)}>
+                    <Link href={item.href} style={{ textDecoration: "none", color: "inherit" }}>
+                      {item.label}
                     </Link>
                   </MenuItem>
                 ))}
@@ -226,11 +165,7 @@ const Header = () => {
                 aria-haspopup="true"
                 aria-expanded={openSettings ? "true" : undefined}
                 onClick={(e) => setSettingsAnchorEl(e.currentTarget)}
-                sx={{
-                  color: "white",
-                  fontSize: "0.875rem",
-                  textTransform: "none",
-                }}
+                sx={{ color: "white", fontSize: "0.875rem", textTransform: "none" }}
               >
                 {t("settings")}
               </Button>
@@ -241,17 +176,9 @@ const Header = () => {
                 onClose={() => setSettingsAnchorEl(null)}
               >
                 {settingsMenuItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => setSettingsAnchorEl(null)}
-                  >
-                    <Link href={item.href} passHref legacyBehavior>
-                      <Typography
-                        component="a"
-                        sx={{ color: "inherit", textDecoration: "none" }}
-                      >
-                        {item.label}
-                      </Typography>
+                  <MenuItem key={index} onClick={() => setSettingsAnchorEl(null)}>
+                    <Link href={item.href} style={{ textDecoration: "none", color: "inherit" }}>
+                      {item.label}
                     </Link>
                   </MenuItem>
                 ))}
@@ -265,10 +192,7 @@ const Header = () => {
           {isAuthenticated ? (
             <>
               {/* Menu Langue */}
-              <Button
-                onClick={(e) => setLangAnchorEl(e.currentTarget)}
-                sx={{ color: "white", textTransform: "none" }}
-              >
+              <Button onClick={(e) => setLangAnchorEl(e.currentTarget)} sx={{ color: "white", textTransform: "none" }}>
                 {language.toUpperCase()}
               </Button>
               <Menu
@@ -277,19 +201,12 @@ const Header = () => {
                 open={openLangMenu}
                 onClose={() => setLangAnchorEl(null)}
               >
-                <MenuItem onClick={() => handleLanguageChange("fr")}>
-                  Français
-                </MenuItem>
-                <MenuItem onClick={() => handleLanguageChange("en")}>
-                  English
-                </MenuItem>
+                <MenuItem onClick={() => handleLanguageChange("fr")}>Français</MenuItem>
+                <MenuItem onClick={() => handleLanguageChange("en")}>English</MenuItem>
               </Menu>
 
               {/* Avatar utilisateur */}
-              <IconButton
-                onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}
-                sx={{ p: 0 }}
-              >
+              <IconButton onClick={(e) => setUserMenuAnchorEl(e.currentTarget)} sx={{ p: 0 }}>
                 <Avatar alt="User Profile" src="/avatar.jpeg" />
               </IconButton>
               <Menu
@@ -299,26 +216,17 @@ const Header = () => {
                 onClose={() => setUserMenuAnchorEl(null)}
               >
                 {userProfileMenuItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => setUserMenuAnchorEl(null)}
-                  >
-                    <Link href={item.href} passHref legacyBehavior>
-                      <Typography
-                        component="a"
-                        sx={{ color: "inherit", textDecoration: "none" }}
-                      >
-                        {item.label}
-                      </Typography>
+                  <MenuItem key={index} onClick={() => setUserMenuAnchorEl(null)}>
+                    <Link href={item.href} style={{ textDecoration: "none", color: "inherit" }}>
+                      {item.label}
                     </Link>
                   </MenuItem>
                 ))}
               </Menu>
             </>
           ) : (
-            <Link href="/login" passHref legacyBehavior>
+            <Link href="/login">
               <Button
-                component="a"
                 sx={{
                   color: "white",
                   fontSize: "0.875rem",

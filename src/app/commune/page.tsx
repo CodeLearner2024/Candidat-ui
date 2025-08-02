@@ -34,6 +34,7 @@ import "../../i18n/i18n";
 
 export default function CommunePage() {
   const { t } = useTranslation();
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Form states
   const [code, setCode] = useState("");
@@ -69,7 +70,7 @@ export default function CommunePage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/communes",
+        `${API_URL}/communes`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCommunes(res.data);
@@ -86,7 +87,7 @@ export default function CommunePage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/provinces",
+        `${API_URL}/provinces`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setProvinces(res.data);
@@ -122,14 +123,14 @@ export default function CommunePage() {
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/communes/${editId}`,
+          `${API_URL}/communes/${editId}`,
           { code, designation, provinceId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         showNotification("Commune mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/communes",
+          `${API_URL}/communes`,
           { code, designation, provinceId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -162,7 +163,7 @@ export default function CommunePage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/communes/${deleteTargetId}`,
+        `${API_URL}/communes/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotification("Commune supprimée avec succès.", "success");

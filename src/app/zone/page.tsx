@@ -35,6 +35,8 @@ import "../../i18n/i18n";
 export default function CommunePage() {
   const { t } = useTranslation();
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   // Form states
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
@@ -69,7 +71,7 @@ export default function CommunePage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/zones",
+        `${API_URL}/zones`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setZones(res.data);
@@ -86,7 +88,7 @@ export default function CommunePage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/communes",
+        `${API_URL}/communes`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCommunes(res.data);
@@ -122,14 +124,14 @@ export default function CommunePage() {
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/zones/${editId}`,
+          `${API_URL}/zones/${editId}`,
           { code, designation, communeId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         showNotification("Zone mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/zones",
+          `${API_URL}/zones`,
           { code, designation, communeId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -162,7 +164,7 @@ export default function CommunePage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/zones/${deleteTargetId}`,
+        `${API_URL}/zones/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotification("zone supprimée avec succès.", "success");

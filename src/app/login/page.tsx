@@ -205,7 +205,7 @@ export default function LoginForm() {
         <Box sx={{ mt: 2, textAlign: "center" }}>
           <Typography variant="body2">
             Don't have an account?{" "}
-            <Link href="/register" passHref legacyBehavior>
+            <Link href="/register">
               <Button
                 component="a"
                 variant="text"
