@@ -39,6 +39,7 @@ type Province = {
 
 export default function SectionPage() {
   const { t } = useTranslation();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Etats pour le formulaire
   const [code, setCode] = useState("");
@@ -71,7 +72,7 @@ export default function SectionPage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/filieres",
+        `${API_URL}/filieres`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -109,14 +110,14 @@ export default function SectionPage() {
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/filieres/${editId}`,
+          `${API_URL}/filieres/${editId}`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         showNotification("Filiere mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/filieres",
+          `${API_URL}/filieres`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -145,7 +146,7 @@ export default function SectionPage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/filieres/${deleteTargetId}`,
+        `${API_URL}/filieres/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotification("Filiere supprimée avec succès.", "success");

@@ -38,6 +38,7 @@ type Profession = {
 
 export default function ProvincePage() {
   const { t } = useTranslation();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   // Form states
   const [code, setCode] = useState("");
@@ -63,6 +64,7 @@ export default function ProvincePage() {
 
   // Load all provinces
   const fetchProfessions = async () => {
+    
     const token = localStorage.getItem("token");
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
@@ -70,7 +72,7 @@ export default function ProvincePage() {
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/professions",
+        `${API_URL}/professions`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -108,14 +110,14 @@ export default function ProvincePage() {
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/professions/${editId}`,
+          `${API_URL}/professions/${editId}`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         showNotification("Profession mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/professions",
+          `${API_URL}/professions`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -144,7 +146,7 @@ export default function ProvincePage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/professions/${deleteTargetId}`,
+        `${API_URL}/professions/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotification("Profession supprimée avec succès.", "success");
