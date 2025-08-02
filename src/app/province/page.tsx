@@ -37,6 +37,7 @@ type Province = {
 };
 
 export default function ProvincePage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { t } = useTranslation();
 
   const [code, setCode] = useState("");
@@ -63,13 +64,14 @@ export default function ProvincePage() {
   // Load all provinces
   const fetchProvinces = async () => {
     const token = localStorage.getItem("token");
+    
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
       return;
     }
     try {
       const res = await axios.get(
-        "http://localhost:8001/candidat-manager/api/v1/provinces",
+        `${API_URL}/provinces`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,14 +107,14 @@ export default function ProvincePage() {
     try {
       if (editId) {
         await axios.patch(
-          `http://localhost:8001/candidat-manager/api/v1/provinces/${editId}`,
+          `${API_URL}/provinces/${editId}`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         showNotification("Province mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          "http://localhost:8001/candidat-manager/api/v1/provinces",
+          `${process.env.NEXT_PUBLIC_API_URL}/provinces`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -141,7 +143,7 @@ export default function ProvincePage() {
 
     try {
       await axios.delete(
-        `http://localhost:8001/candidat-manager/api/v1/provinces/${deleteTargetId}`,
+        `${API_URL}/provinces/${deleteTargetId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotification("Province supprimée avec succès.", "success");
