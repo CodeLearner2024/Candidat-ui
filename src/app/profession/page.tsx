@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -86,7 +85,9 @@ export default function ProvincePage() {
 
   useEffect(() => {
     fetchProfessions();
-  }, []);
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+
+  }, [fetchProfessions]);
 
   // Snackbar helpers
   const showNotification = (msg: string, severity: Severity) => {
