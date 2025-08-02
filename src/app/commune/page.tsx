@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useCallback } from "react";
+import axios, { AxiosError } from "axios";
 import {
   Box,
   Button,
@@ -32,84 +32,88 @@ import { Add, Edit, Delete } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import "../../i18n/i18n";
 
+interface Province {
+  id: number;
+  designation: string;
+}
+
+interface Commune {
+  id: number;
+  code: string;
+  designation: string;
+  province: Province;
+}
+
+type Severity = "success" | "error" | "info" | "warning";
+
 export default function CommunePage() {
   const { t } = useTranslation();
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // Form states
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
   const [provinceId, setProvinceId] = useState<number | "">("");
   const [editId, setEditId] = useState<number | null>(null);
 
-  // Data
   const [communes, setCommunes] = useState<Commune[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
 
-  // Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Snackbar
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
   const [snackSeverity, setSnackSeverity] = useState<Severity>("success");
 
-  // Dialogs
   const [formOpen, setFormOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
-  const token = localStorage.getItem("token");
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  // Load communes
-  const fetchCommunes = async () => {
-    if (!token) {
-      showNotification("Token manquant. Connectez-vous.", "error");
-      return;
-    }
-    try {
-      const res = await axios.get(
-        `${API_URL}/communes`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCommunes(res.data);
-    } catch {
-      showNotification("Erreur de chargement des communes.", "error");
-    }
-  };
-
-  // Load provinces
-  const fetchProvinces = async () => {
-    if (!token) {
-      showNotification("Token manquant. Connectez-vous.", "error");
-      return;
-    }
-    try {
-      const res = await axios.get(
-        `${API_URL}/provinces`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setProvinces(res.data);
-    } catch {
-      showNotification("Erreur de chargement des provinces.", "error");
-    }
-  };
-
-  useEffect(() => {
-    fetchCommunes();
-    fetchProvinces();
-  }, []);
-
-  // Snackbar helpers
   const showNotification = (msg: string, severity: Severity) => {
     setSnackMessage(msg);
     setSnackSeverity(severity);
     setSnackOpen(true);
   };
+
   const handleSnackClose = () => setSnackOpen(false);
 
-  // Save (create or update)
+  const fetchCommunes = useCallback(async () => {
+    if (!token) {
+      showNotification("Token manquant. Connectez-vous.", "error");
+      return;
+    }
+    try {
+      const res = await axios.get(`${API_URL}/communes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCommunes(res.data);
+    } catch {
+      showNotification("Erreur de chargement des communes.", "error");
+    }
+  }, [API_URL, token]);
+
+  const fetchProvinces = useCallback(async () => {
+    if (!token) {
+      showNotification("Token manquant. Connectez-vous.", "error");
+      return;
+    }
+    try {
+      const res = await axios.get(`${API_URL}/provinces`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProvinces(res.data);
+    } catch {
+      showNotification("Erreur de chargement des provinces.", "error");
+    }
+  }, [API_URL, token]);
+
+  useEffect(() => {
+    fetchCommunes();
+    fetchProvinces();
+  }, [fetchCommunes, fetchProvinces]);
+
   const handleSave = async () => {
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
@@ -139,9 +143,9 @@ export default function CommunePage() {
       setFormOpen(false);
       resetForm();
       fetchCommunes();
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message || "Erreur lors de l'enregistrement.";
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      const message = error.response?.data?.message || "Erreur lors de l'enregistrement.";
       showNotification(message, "error");
     }
   };
@@ -153,19 +157,13 @@ export default function CommunePage() {
     setEditId(null);
   };
 
-  // Delete
   const handleDelete = async () => {
-    if (!deleteTargetId) return;
-    if (!token) {
-      showNotification("Token manquant.", "error");
-      return;
-    }
+    if (!deleteTargetId || !token) return;
 
     try {
-      await axios.delete(
-        `${API_URL}/communes/${deleteTargetId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.delete(`${API_URL}/communes/${deleteTargetId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       showNotification("Commune supprimée avec succès.", "success");
       setDeleteConfirmOpen(false);
       fetchCommunes();
@@ -174,7 +172,6 @@ export default function CommunePage() {
     }
   };
 
-  // Pagination
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
@@ -200,7 +197,6 @@ export default function CommunePage() {
         {t("create_commune")}
       </Button>
 
-      {/* Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -256,7 +252,6 @@ export default function CommunePage() {
         />
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} fullWidth>
         <DialogTitle>
           {editId ? "Modifier une Commune" : "Ajouter une Commune"}
@@ -303,11 +298,7 @@ export default function CommunePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteConfirmOpen}
-        onClose={() => setDeleteConfirmOpen(false)}
-      >
+      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -322,7 +313,6 @@ export default function CommunePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar */}
       <Snackbar
         open={snackOpen}
         autoHideDuration={6000}

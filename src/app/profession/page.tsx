@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -78,7 +79,7 @@ export default function ProvincePage() {
         }
       );
       setProfessions(res.data);
-    } catch (err) {
+    } catch  {
       showNotification("Erreur de chargement des professions.", "error");
     }
   };

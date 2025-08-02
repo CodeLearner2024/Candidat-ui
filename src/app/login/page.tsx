@@ -20,9 +20,7 @@ import Link from "next/link";
 function getRoleFromToken(token: string): string | null {
   try {
     const payloadBase64 = token.split(".")[1];
-    // Convertir base64url en base64 standard
     const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
-    // Décoder en string JSON
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split("")
@@ -30,7 +28,6 @@ function getRoleFromToken(token: string): string | null {
         .join("")
     );
     const payload = JSON.parse(jsonPayload);
-    // Adapter la clé selon la structure de ton token (exemple : "role", "roles", "authorities"...)
     return payload.role || null;
   } catch (error) {
     console.error("Erreur lors du décodage du token :", error);
@@ -39,6 +36,8 @@ function getRoleFromToken(token: string): string | null {
 }
 
 export default function LoginForm() {
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +62,7 @@ export default function LoginForm() {
 
     try {
       const res = await fetch(
-        "http://localhost:8001/candidat-manager/api/v1/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {
@@ -81,7 +80,6 @@ export default function LoginForm() {
       setToken(data.token);
       localStorage.setItem("token", data.token);
 
-      // Extraire le rôle depuis le token JWT
       const role = getRoleFromToken(data.token);
       if (role) {
         localStorage.setItem("role", role);
@@ -200,11 +198,10 @@ export default function LoginForm() {
           </Box>
         )}
 
-        {/* --- */}
-        {/* New section for registration prompt */}
+        {/* Section d'inscription */}
         <Box sx={{ mt: 2, textAlign: "center" }}>
           <Typography variant="body2">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register">
               <Button
                 component="a"

@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   Box,
@@ -44,59 +45,70 @@ export default function ProvincePage() {
   const [designation, setDesignation] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
-  // Data
   const [provinces, setProvinces] = useState<Province[]>([]);
 
-  // Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Snackbar
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
   const [snackSeverity, setSnackSeverity] = useState<Severity>("success");
 
-  // Dialogs
   const [formOpen, setFormOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
-  // Load all provinces
-  const fetchProvinces = async () => {
-    const token = localStorage.getItem("token");
-    
-    if (!token) {
-      showNotification("Token manquant. Connectez-vous.", "error");
-      return;
-    }
-    try {
-      const res = await axios.get(
-        `${API_URL}/provinces`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setProvinces(res.data);
-    } catch (err) {
-      showNotification("Erreur de chargement des provinces.", "error");
-    }
-  };
-
-  useEffect(() => {
-    fetchProvinces();
-  }, []);
-
-  // Snackbar helpers
   const showNotification = (msg: string, severity: Severity) => {
     setSnackMessage(msg);
     setSnackSeverity(severity);
     setSnackOpen(true);
   };
+
   const handleSnackClose = () => setSnackOpen(false);
 
-  // Save (create or update)
+  const fetchProvinces = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      showNotification("Token manquant. Connectez-vous.", "error");
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${API_URL}/provinces`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setProvinces(res.data);
+    } catch {
+      showNotification("Erreur de chargement des provinces.", "error");
+    }
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchProvinces();
+  }, [fetchProvinces]);
+
+  const extractErrorMessage = (error: unknown): string => {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      typeof (error as any).response === "object" &&
+      (error as any).response !== null &&
+      "data" in (error as any).response &&
+      typeof (error as any).response.data === "object" &&
+      (error as any).response.data !== null &&
+      "message" in (error as any).response.data &&
+      typeof (error as any).response.data.message === "string"
+    ) {
+      return (error as any).response.data.message;
+    }
+    if (error instanceof Error) return error.message;
+    return "Erreur lors de l'enregistrement.";
+  };
+
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -114,7 +126,7 @@ export default function ProvincePage() {
         showNotification("Province mise à jour avec succès !", "success");
       } else {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/provinces`,
+          `${API_URL}/provinces`,
           { code, designation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -125,14 +137,12 @@ export default function ProvincePage() {
       setDesignation("");
       setEditId(null);
       fetchProvinces();
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message || "Erreur lors de l'enregistrement.";
+    } catch (error: unknown) {
+      const message = extractErrorMessage(error);
       showNotification(message, "error");
     }
   };
 
-  // Delete
   const handleDelete = async () => {
     if (!deleteTargetId) return;
     const token = localStorage.getItem("token");
@@ -142,10 +152,9 @@ export default function ProvincePage() {
     }
 
     try {
-      await axios.delete(
-        `${API_URL}/provinces/${deleteTargetId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.delete(`${API_URL}/provinces/${deleteTargetId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       showNotification("Province supprimée avec succès.", "success");
       setDeleteConfirmOpen(false);
       fetchProvinces();
@@ -154,7 +163,6 @@ export default function ProvincePage() {
     }
   };
 
-  // Handlers for pagination
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
@@ -182,7 +190,6 @@ export default function ProvincePage() {
         {t("create_province")}
       </Button>
 
-      {/* Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -235,7 +242,7 @@ export default function ProvincePage() {
         />
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
+      {/* Dialog d'ajout/modification */}
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} fullWidth>
         <DialogTitle>
           {editId ? t("edit_province") : t("add_province")}
@@ -268,7 +275,7 @@ export default function ProvincePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Dialog de confirmation suppression */}
       <Dialog
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}
@@ -287,7 +294,7 @@ export default function ProvincePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar */}
+      {/* Snackbar de notification */}
       <Snackbar
         open={snackOpen}
         autoHideDuration={6000}

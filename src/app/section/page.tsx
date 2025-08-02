@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   Box,
@@ -39,12 +40,12 @@ type Province = {
 export default function SectionPage() {
   const { t } = useTranslation();
 
-  // Form states
+  // Etats pour le formulaire
   const [code, setCode] = useState("");
   const [designation, setDesignation] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
 
-  // Data
+  // Données
   const [filieres, setFilieres] = useState<Province[]>([]);
 
   // Pagination
@@ -56,13 +57,13 @@ export default function SectionPage() {
   const [snackMessage, setSnackMessage] = useState("");
   const [snackSeverity, setSnackSeverity] = useState<Severity>("success");
 
-  // Dialogs
+  // Dialogues
   const [formOpen, setFormOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
-  // Load all provinces
-  const fetchFilieres = async () => {
+  // fetchFilieres mémorisé avec useCallback
+  const fetchFilieres = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       showNotification("Token manquant. Connectez-vous.", "error");
@@ -78,16 +79,18 @@ export default function SectionPage() {
         }
       );
       setFilieres(res.data);
-    } catch (err) {
+    } catch  {
+      // On ignore l'erreur ici ou on peut la logger
       showNotification("Erreur de chargement des filieres.", "error");
     }
-  };
-
-  useEffect(() => {
-    fetchFilieres();
   }, []);
 
-  // Snackbar helpers
+  // useEffect avec fetchFilieres en dépendance (fonction stable grâce à useCallback)
+  useEffect(() => {
+    fetchFilieres();
+  }, [fetchFilieres]);
+
+  // Helpers Snackbar
   const showNotification = (msg: string, severity: Severity) => {
     setSnackMessage(msg);
     setSnackSeverity(severity);
@@ -95,7 +98,7 @@ export default function SectionPage() {
   };
   const handleSnackClose = () => setSnackOpen(false);
 
-  // Save (create or update)
+  // Sauvegarde (création ou mise à jour)
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -131,7 +134,7 @@ export default function SectionPage() {
     }
   };
 
-  // Delete
+  // Suppression
   const handleDelete = async () => {
     if (!deleteTargetId) return;
     const token = localStorage.getItem("token");
@@ -153,7 +156,7 @@ export default function SectionPage() {
     }
   };
 
-  // Handlers for pagination
+  // Pagination handlers
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
@@ -234,7 +237,7 @@ export default function SectionPage() {
         />
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
+      {/* Dialogues Add/Edit */}
       <Dialog open={formOpen} onClose={() => setFormOpen(false)} fullWidth>
         <DialogTitle>
           {editId ? "Modifier une Filiere" : "Ajouter une Filiere"}
@@ -267,7 +270,7 @@ export default function SectionPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Dialoge confirmation suppression */}
       <Dialog
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}
