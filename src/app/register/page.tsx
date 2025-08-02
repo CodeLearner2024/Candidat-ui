@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link"; // For the "Already have an account?" link
 
 export default function RegisterForm() {
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +45,7 @@ export default function RegisterForm() {
 
     try {
       const res = await fetch(
-        "http://localhost:8001/candidat-manager/api/v1/api/auth/register",
+        `${API_URL}/api/auth/register`,
         {
           method: "POST",
           headers: {
